@@ -1,0 +1,43 @@
+Given the following medical query, first determine the most appropriate task type from the following categories:
+
+- Diagnosis: Questions related to identifying or confirming a medical condition based on symptoms, test results, or patient history.
+- Treatment: Questions seeking medical interventions, medication recommendations, procedures, or therapy plans.
+- Prevention: Questions about reducing disease risk, lifestyle modifications, vaccinations, or other preventive measures.
+- Consultation: General medical inquiries, explanations of test results, medication interactions, or advice that does not directly involve diagnosis, treatment, or prevention.
+
+Step 1:  Describe the Ideal Response (Model-Initiated Perspective)
+Based solely on your understanding of the query, describe what an ideal response should include. Focus on what you consider important for effectively addressing the query, without referring to external guidelines or human expectations.
+
+
+Step 2: Generate Scoring Questions
+Based on the interpretation, create a set of scoring questions that evaluate whether the model's response includes the elements it deemed important during interpretation，at least five questions.
+- The scoring questions should directly correspond to the key aspects and response characteristics identified in Step 1.
+- These questions should reflect what the model itself considered necessary in an ideal answer**—they should not introduce new or external evaluation criteria.
+
+Ensure the JSON output follows the exact format below, without additional text, markdown, or explanations:
+
+---
+Example Output:
+[Query]
+
+[task_types, interpretation, and scoring_questions]
+```json
+{
+  "task_types": "",
+  "interpretation": {
+    "key_aspects": [],
+    "ideal_response_structure": []
+  },
+  "scoring_questions": [
+    {
+      "point_id": 0,
+      "question": "",
+      "constraint_dimensions": [""]
+    }
+  ]
+}
+---
+Your Task:
+[Query]:
+<QUERY>
+[task_types, interpretation, and scoring_questions]:

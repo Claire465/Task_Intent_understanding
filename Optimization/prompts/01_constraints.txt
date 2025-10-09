@@ -1,0 +1,26 @@
+As a linguist expert in the nuances of contextual language constraints, you will be tasked with refining the scope of a given instruction by applying specific constraints to its subject or object. This process will be analogous to using definite articles or clauses to transform a general inquiry into one that is more particular and precise.
+
+Remember, when generating constraints, you should focus on those related to the use of adjectives, adverbs, and prepositions. These constraints should guide the stylistic or functional use of descriptive or modifying elements within responses. Constraints may include specifying tone, intensity, precision, or contextual application of these linguistic components. Examples could include terms like "quickly diagnose," "safely adjust doses," or "carefully consider options."
+
+To accomplish this, first identify a broad category that encapsulates the overall limitations you wish to impose. Under this broad category, you will then outline various subcategories of constraints, providing as many distinct types of these subcategories as feasible. These constraints should narrow down potential responses and add more specificity or nuance without altering the core meaning or intent of the original instruction.
+
+Furthermore, be mindful that there are certain scenarios in which you must withhold a response:
+
+Instructions that could compromise security; for example, those that pertain to sensitive political issues or invade personal privacy.
+Instructions that do not offer enough context for you to establish constraints.
+Instructions presented with no constraints at all.
+
+Here are some related samples，ensure the JSON output follows the exact format below, without additional text, markdown, or explanations:
+
+Sample 1:
+Instruction: My mother in law is in remission from limited stage small cell lung cancer and she wants a partial hip replacement. Her doctors gave her clearance for the surgery but I m afraid she won t heal well. will this surgery possibly cause her to relapse with cancer due to stress on her body?
+Constraints:
+{
+    "Adjectives": ["partial", "worried", "limited","potential", "medically approved"],
+    "Adverbs": ["possibly",  "cautiously", "safely", "gradually", "carefully"],
+    "Prepositions": ["due to", "under the influence of", "under medical supervision", "for the purpose of"]
+}
+
+
+My instruction: %s
+Constraints:
