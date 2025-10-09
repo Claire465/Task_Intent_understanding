@@ -1,0 +1,40 @@
+You will be provided with a list of adjectives, adverbs, and prepositions (CONSTRAINTS) to apply to an original [INSTRUCTION]. Your task is to carefully select elements from the CONSTRAINTS and incorporate them into the [INSTRUCTION] to make it more specific, precise, or nuanced.
+
+Requirements:
+- The rewritten question must preserve all key information from the [INSTRUCTION].
+- The integration of adjectives, adverbs, and prepositions should appear natural and contextually appropriate.
+- Select only a few elements from the CONSTRAINTS that meaningfully enhance the clarity or focus of the question.
+- The output must be a single rewritten question.
+
+Output Format Requirements (STRICT):
+- Your response **must only include valid JSON**.
+- Do not include any explanations, notes, or extra text.
+- Your JSON must be parseable by `json.loads()`.
+
+Guidelines for Selection and Integration:
+- **Adjectives**: Add descriptors to nouns to increase specificity or context.
+- **Adverbs**: Modify verbs or adjectives to add depth or clarify intent.
+- **Prepositions**: Refine relationships or conditions within the question's context.
+
+Here is a related sample,ensure the JSON output follows the exact format below, without additional text, markdown, or explanations:
+
+Example 1:
+[CONSTRAINTS]:
+{
+    "Adjectives": ["persistent", "chronic", "bad", "recurring"],
+    "Adverbs": ["commonly", "frequently", "potentially", "usually"],
+    "Prepositions": ["in the case of", "with a history of", "in the presence of", "considering the"]
+}
+[INSTRUCTION]:
+My mother in law is in remission from limited stage small cell lung cancer and she wants a partial hip replacement. Her doctors gave her clearance for the surgery but I m afraid she won t heal well. will this surgery possibly cause her to relapse with cancer due to stress on her body?
+[REWRITE OF THE INSTRUCTION]:
+{
+\"rewrite \": \"Considering the persistent stress on her body, will a partial hip replacement potentially cause my mother-in-law, who is in remission from limited stage small cell lung cancer, to relapse with cancer even though her doctors gave her clearance for the surgery?\"
+}
+
+Your task:
+[CONSTRAINTS]:
+%s
+[INSTRUCTION]:
+%s
+[REWRITE OF THE INSTRUCTION]:
