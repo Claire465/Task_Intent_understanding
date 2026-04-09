@@ -1,4 +1,10 @@
-def get_prompt(stage):
+import os
+
+
+def get_prompt(stage, base_dir=None):
     stage = stage.replace(' ', '_')
-    with open(f"prompts/{stage}.txt", 'r', encoding="utf-8") as f:
+    if base_dir is None:
+        base_dir = os.getcwd()
+    prompt_path = os.path.join(base_dir, "prompts", f"{stage}.txt")
+    with open(prompt_path, 'r', encoding="utf-8") as f:
         return f.read()

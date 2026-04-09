@@ -61,7 +61,7 @@ def are_semantically_equivalent(a1: str, a2: str, question: str, output:str, str
     else:
         return "contradiction" not in [imp1, imp2] and not (imp1 == "neutral" and imp2 == "neutral")
 
-def get_semantic_ids(generations, question, strict=False):
+def get_semantic_ids(generations, question, output, strict=False):
     n = len(generations)
     cluster_ids = [-1] * n
     cluster_id = 0
@@ -70,7 +70,7 @@ def get_semantic_ids(generations, question, strict=False):
             continue
         cluster_ids[i] = cluster_id
         for j in range(i + 1, n):
-            if cluster_ids[j] == -1 and are_semantically_equivalent(generations[i], generations[j], question, strict):
+            if cluster_ids[j] == -1 and are_semantically_equivalent(generations[i], generations[j], question, output, strict):
                 cluster_ids[j] = cluster_id
         cluster_id += 1
     return cluster_ids
@@ -119,7 +119,7 @@ def main(args):
         question = item["question"]
         output = item["output"]
         p_true = item["p_true"]
-        cluster_ids = get_semantic_ids(generations, question, strict=False)
+        cluster_ids = get_semantic_ids(generations, question, output, strict=False)
 
         result = {
             "main_id": item.get("main_id", ""),

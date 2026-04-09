@@ -1,4 +1,5 @@
 import json
+import os
 import numpy as np
 
 def cluster_assignment_entropy(semantic_ids):
@@ -12,7 +13,10 @@ def cluster_assignment_entropy(semantic_ids):
     entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
     return max(0.0, entropy)
 
-with open("evaluation_data\step2_cluster_gemini_result.json", "r", encoding="utf-8") as f:
+input_path = os.path.join("evaluation_data", "step2_cluster_gemini_result.json")
+output_path = os.path.join("evaluation_precision", "step3_gemini_entropy.json")
+
+with open(input_path, "r", encoding="utf-8") as f:
     data = json.load(f)
 
 for item in data:
@@ -20,8 +24,9 @@ for item in data:
     if semantic_ids:
         item["semantic_entropy"] = cluster_assignment_entropy(semantic_ids)
     else:
-        item["semantic_entropy"] = None  
+        item["semantic_entropy"] = None
 
-with open("evaluation_precision\step3_gemini_entropy.json", "w", encoding="utf-8") as f:
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
+with open(output_path, "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
 

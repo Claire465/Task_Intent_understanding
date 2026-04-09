@@ -1,9 +1,12 @@
 import json
 import os
+import sys
 import re
 from tqdm import tqdm
 import requests
 import argparse
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import get_prompt
 
 
@@ -68,7 +71,7 @@ def main(args):
         json.dump({}, f)
     constraints = {}
     main_id_counter = 0
-    prompt_template = get_prompt("01 constraints")
+    prompt_template = get_prompt("01 constraints", base_dir=os.path.dirname(os.path.abspath(__file__)))
 
     for question in tqdm(questions, desc="Processing"):
         _, answer = get_response(question, prompt_template % question)

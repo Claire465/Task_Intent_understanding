@@ -1,4 +1,5 @@
 import json
+import os
 
 def load_data(input_file):
     with open(input_file, "r", encoding="utf-8") as f:
@@ -41,8 +42,8 @@ def process_data(data):
     return original_questions
 
 def main():
-    input_file_path = r"Processed_data\01_gemini_interpretation.json"
-    original_data_path = r"Processed_data\02_gemini_data.json"
+    input_file_path = os.path.join("Processed_data", "01_gemini_interpretation.json")
+    original_data_path = os.path.join("Processed_data", "02_gemini_data.json")
     data = load_data(input_file_path)
     original_questions = process_data(data)
     save_data(original_questions, original_data_path)

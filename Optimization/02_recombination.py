@@ -1,10 +1,13 @@
 import json
 import os
+import sys
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 import argparse
 import requests
-from ..utils import get_prompt
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils import get_prompt
 
 MAX_API_RETRY = 30
 Baseurl = "Baseurl"
@@ -88,7 +91,7 @@ def main(args):
     constrainted_question = {}
 
     # load prompts
-    prompt = get_prompt("02 recombination")
+    prompt = get_prompt("02 recombination", base_dir=os.path.dirname(os.path.abspath(__file__)))
 
     # load saved samples
     dedup_set = set()

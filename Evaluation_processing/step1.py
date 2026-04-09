@@ -12,6 +12,7 @@ from prompts.RAL_evaluator import EVALUATION_PROMPT
 Baseurl = "baseurl"
 Skey = "skey"
 url = Baseurl + "/v1/chat/completions"
+SYS_MSG = EVALUATION_PROMPT
 
 
 def load_jsonl(file_path):
@@ -26,12 +27,8 @@ def load_jsonl(file_path):
 def get_payload(line):
     instruction = line['instruction'][:6000]
     question = line['question']
-    if line['output'] != None:
-        output = line['output'][:4000]
-    else:
-        output = 'None'
+    output = line['output'][:4000] if line['output'] is not None else 'None'
     content = SYS_MSG.format(input=instruction, output=output, question=question)
-    content = json.dumps(content) 
     payload = json.dumps({
         "model": "model_name",
         "max_tokens": 1024,
@@ -42,7 +39,6 @@ def get_payload(line):
             }
         ],
     })
-    print(json.dumps(payload, indent=2, ensure_ascii=False)) 
     return payload
 
 
@@ -73,8 +69,8 @@ def get_answer(input_data: dict, retry=30):
             print(response.text)  
             raise Exception("API request failed with status code: " + str(response.status_code))
 
-        if generation == None or generation == "":
-            get_answer(input_data, retry=retry - 1)
+        if generation is None or generation == "":
+            return get_answer(input_data, retry=retry - 1)
 
         re_result = re.findall(r'Answer:\s*(Yes|No)', generation, re.IGNORECASE)
         if re_result:
@@ -96,35 +92,30 @@ def get_answer(input_data: dict, retry=30):
             entry['point_explanation'] = "None"
             entry['payload'] = payload
             save_jsonl(entry, save_path)
+            return entry
         print(f"retry:{retry}")
         print(e)
         print(traceback.format_exc())
-        get_answer(input_data, retry=retry)
+        return get_answer(input_data, retry=retry)
 
 
 def run_evaluation(save_path, datas, num_pool):
-    processed = 0
+    processed_keys = set()
     if os.path.exists(save_path):
         with open(save_path, 'r', encoding='utf-8') as f:
-            processed = sum(1 for _ in f)
+            for line in f:
+                try:
+                    entry = json.loads(line)
+                    processed_keys.add((entry.get('main_id'), entry.get('point_id')))
+                except:
+                    continue
+    processed = len(processed_keys)
 
     _input = []
-    for i, data in enumerate(datas):
+    for data in datas:
         if not data:
             continue
-        is_processed = False
-        if os.path.exists(save_path):
-            with open(save_path, 'r', encoding='utf-8') as f:
-                for line in f:
-                    try:
-                        entry = json.loads(line)
-                        if entry.get('main_id') == data.get('main_id') and \
-                           entry.get('point_id') == data.get('point_id'):
-                            is_processed = True
-                            break
-                    except:
-                        continue
-        if not is_processed:
+        if (data.get('main_id'), data.get('point_id')) not in processed_keys:
             _input.append({"data": data, "eval_model": "claude", "save_path": save_path})
 
     with tqdm(total=len(datas), initial=processed, desc='Processing', ncols=100) as pbar:
@@ -160,8 +151,6 @@ def get_data(data_path, llm_output_path):
     datas = []
     for i, (d, o) in enumerate(zip(data, outputs)):
         for j, q in enumerate(d['scoring_questions']):
-            # if q['rule'] != None:
-                # continue
             datas.append({
                 "main_id": i,
                 "point_id": j,
@@ -175,17 +164,17 @@ def get_data(data_path, llm_output_path):
 def main_run(args):
     input_file = os.path.join(args.dir, "03_gemini_category_data.json")
     llm_output_file = os.path.join(args.llm_output_path, "04_gemini_generation.jsonl")
-    output_file = os.path.join(args.output_path, "step1_referee_modelName1.jsonl")
+    output_file = os.path.join(args.output_path, f"step1_referee_gemini{args.run_id}.jsonl")
     datas = get_data(input_file, llm_output_file)
     run_evaluation(output_file, datas, args.num_pool)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dir", type=str, default="Data_processing\Processed_data")
-    parser.add_argument("--llm_output_path", type=str, default="Data_processing\Processed_data")
+    parser.add_argument("--dir", type=str, default=os.path.join("Data_processing", "Processed_data"))
+    parser.add_argument("--llm_output_path", type=str, default=os.path.join("Data_processing", "Processed_data"))
     parser.add_argument("--num_pool", type=int, default=1)
     parser.add_argument("--output_path", type=str, default="evaluation_data")
+    parser.add_argument("--run_id", type=int, default=1, help="Evaluator run index (1-5), used to name output file")
     args = parser.parse_args()
-    SYS_MSG = EVALUATION_PROMPT
     main_run(args)

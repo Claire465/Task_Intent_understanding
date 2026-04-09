@@ -56,7 +56,6 @@ def get_payload(line):
             }
         ],
     })
-    print(json.dumps(payload, indent=2, ensure_ascii=False))  
     return payload
 
 
@@ -105,32 +104,26 @@ def get_answer(input_data: dict, retry=30):
             entry['payload'] = payload
             save_jsonl(entry, save_path)
             return entry
-        get_answer(input_data, retry=retry)
+        return get_answer(input_data, retry=retry)
 
 
 def run_classification(save_path, datas, num_pool):
-    processed = 0
+    processed_keys = set()
     if os.path.exists(save_path):
         with open(save_path, 'r', encoding='utf-8') as f:
-            processed = sum(1 for _ in f)
+            for line in f:
+                try:
+                    entry = json.loads(line)
+                    processed_keys.add((entry.get('main_id'), entry.get('point_id')))
+                except:
+                    continue
+    processed = len(processed_keys)
 
     _input = []
-    for i, data in enumerate(datas):
+    for data in datas:
         if not data:
             continue
-        is_processed = False
-        if os.path.exists(save_path):
-            with open(save_path, 'r', encoding='utf-8') as f:
-                for line in f:
-                    try:
-                        entry = json.loads(line)
-                        if entry.get('main_id') == data.get('main_id') and \
-                           entry.get('point_id') == data.get('point_id'):
-                            is_processed = True
-                            break
-                    except:
-                        continue
-        if not is_processed:
+        if (data.get('main_id'), data.get('point_id')) not in processed_keys:
             _input.append({"data": data, "eval_model": "claude", "save_path": save_path})
 
     with tqdm(total=len(datas), initial=processed, desc='Processing', ncols=100) as pbar:

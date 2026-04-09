@@ -1,10 +1,13 @@
 import json
 import os
+import sys
 import requests
 import re
-from ..utils import get_prompt
 import argparse
 from tqdm import tqdm
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils import get_prompt
 
 MAX_API_RETRY = 10
 Baseurl = "Baseurl"
@@ -57,7 +60,7 @@ def get_response(query, prompt_template):
                     print("Error: JSON part not found in the response.")
                     return query, None, {}, []
             else:
-                    print(f"Error: No choices in the response data.")
+                print(f"Error: No choices in the response data.")
         except requests.exceptions.RequestException as e:
             print(f"Request failed: {e}")
     return query, None, {}, []
@@ -82,22 +85,20 @@ def main(args):
     input_file = os.path.join(args.dir, "selected_query.txt")
     output_file = os.path.join(args.dir, "01_interpretation.json")
 
-    prompt_template = get_prompt("01 interpretation").strip().replace("\n", " ").replace("\t", " ")
+    prompt_template = get_prompt("01 interpretation", base_dir=os.path.dirname(os.path.abspath(__file__))).strip().replace("\n", " ").replace("\t", " ")
     print(f"Prompt template: {prompt_template}")
     with open(input_file, "r", encoding="utf-8") as f:
         data = [line.strip() for line in f if line.strip()]
 
-    results = []
     with tqdm(total=len(data), desc="Processing queries", unit="query") as pbar:
         for original_question in data:
-            original_question, task_type, interpretation, scoring_questions = get_response(original_question,prompt_template)
+            original_question, task_type, interpretation, scoring_questions = get_response(original_question, prompt_template)
             result = {
                 "original_question": original_question,
                 "task_type": task_type,
                 "interpretation": interpretation,
                 "scoring_questions": scoring_questions
             }
-            results.append(result)
             save_to_json(output_file, result)
             pbar.update(1)
 

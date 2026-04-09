@@ -1,8 +1,9 @@
 import json
+import os
 
-instruction_file = r"Data_processing/Processed_data/03_gemini_category_data.json"
-model_output_file = r"evaluation_precision/step3_gemini_entropy.json"
-output_file = r"evaluation_data/step4_gemini.json"
+instruction_file = os.path.join("Data_processing", "Processed_data", "03_gemini_category_data.json")
+model_output_file = os.path.join("evaluation_precision", "step3_gemini_entropy.json")
+output_file = os.path.join("evaluation_data", "step4_gemini.json")
 
 with open(instruction_file, "r", encoding="utf-8") as f:
     instruction_data = json.load(f)
