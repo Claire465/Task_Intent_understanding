@@ -10,11 +10,19 @@ API_KEY = "skey"
 
 # Prompt 模板
 PROMPT_TEMPLATE = """
-We are evaluating answers to the question "Does the model's output {output} satisfy the evaluation criterion {question}?"
+We are evaluating answers to the question \
+"Does the model's output {output} satisfy the evaluation criterion {question}?"
 Here are two possible answers:
 Possible Answer 1: {text1}
 Possible Answer 2: {text2}
-Does Possible Answer 1 semantically entail Possible Answer 2? Respond only with one of: entailment, contradiction, or neutral.
+
+Does Possible Answer 1 semantically entail Possible Answer 2?
+Please reason step by step:
+1. What is the core claim of Possible Answer 1?
+2. What is the core claim of Possible Answer 2?
+3. If Possible Answer 1 is true, does Possible Answer 2 necessarily follow,
+   possibly follow, or is it contradicted?
+4. Final judgment (one word only): entailment / neutral / contradiction
 """
 
 # 构造 Prompt
